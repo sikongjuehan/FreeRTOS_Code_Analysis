@@ -26,8 +26,7 @@ FreeRTOS 是一个实时操作系统，它所奉行的调度规则：
 2. 同等优先级的任务轮转调度。
 
 具体的实现如下图所示：
-
-![](./res/schedule/schedule_lists.png)
+![](https://github.com/sikongjuehan/FreeRTOS_Code_Analysis/blob/main/res/schedule/schedule_lists.png)
 
 ​																				图 1
 
@@ -107,7 +106,7 @@ lib/FreeRTOS/portable/GCC/ARM_CA53_64_BIT/portASM.S:
 
 所谓的上下文就是一些寄存器和系统状态信息，不同架构体系的寄存器可能不一样，这里就以 ARMv8 64bit为例进行说明，而且栈的增长方向是从高地址往低地址。
 
-![](./res/schedule/stack_struct.png)
+![](https://github.com/sikongjuehan/FreeRTOS_Code_Analysis/blob/main/res/schedule/stack_struct.png)
 
 ​																								图 2
 
@@ -123,7 +122,7 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
 
 从实现来看就是在栈中填入一些初始化值，并将任务函数，以及参数填入栈中。其关键数据如下图所示：
 
-![](./res/schedule/stack_struct.png)
+![](https://github.com/sikongjuehan/FreeRTOS_Code_Analysis/blob/main/res/schedule/stack_init.png)
 
 可以看到填充的结构和图3所示的结构是一致的。有的寄存器在第一次执行的并不影响任务执行，所以被初始化了任意值，但任务函数的参数保存到了 X0 寄存器的位置，任务函数本身地址被保存到了 ELR 寄存器的位置。这样做的目的就是在 portRESTORE_CONTEXT() 函数加载该栈结构后，执行 ERET 指令，系统就跳转到 ELR 寄存器中的地址去执行，也就是任务函数中。
 
